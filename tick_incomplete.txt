@@ -1,0 +1,110 @@
+package main
+import (
+  "html/template"
+  "net/http"
+  "fmt"   
+ 
+)
+type Show struct {
+	ShowTime string
+	ShowName string
+	Date string
+	Tickets string
+ }
+ 
+func main(){
+	tmpl :=template.Must(template.ParseFiles("movie.html"))
+	  http.HandleFunc("/",func(w http.ResponseWriter, r *http.Request) {
+	  if r.Method != http.MethodPost {
+		tmpl.Execute(w,nil)
+		return
+		}
+		internal_details:=make( map[string]Show)
+		internal_details["morning_show"]=Show{"11:00","PUBG","04-06-2018","50"}
+		internal_details["matnee_show"]=Show{"15:00","BAHUBALI","04-06-2018","50"}
+		internal_details["night_show"]=Show{"21:30","TERMINATOR","04-06-2018","50"}
+
+				//fmt.Println(internal_details)
+				key:=  r.FormValue("Key")
+				showtime:=  r.FormValue("ShowTime")
+				showname:= r.FormValue("ShowName")
+				date:= r.FormValue("Date")
+				tickets:= r.FormValue("Tickets")
+				external_details:=make( map[string]Show)
+				//date:= r.FormValue("Date")
+				external_details[key]=Show{showtime,showname,date,tickets}
+				//mapx:=external_details[key]
+				fmt.Println(showname)
+
+				if(flag==1){                
+		
+					http.Redirect(w,r,"/det",http.StatusMovedPermanently)
+				}else if (flag==0){
+					fmt.Fprintf(w,"Show is not available")
+				}
+			
+			})
+			
+			
+			http.HandleFunc("/det",func(w http.ResponseWriter,r *http.Request,){
+			
+				tmpl:=template.Must(template.ParseFiles("go.html"))
+					if r.Method!=http.MethodPost{
+						tmpl.Execute(w,nil)
+					}
+			var falg int
+			fmt.Printf(x)
+			z:=r.FormValue("date")
+			for _,y:=range show{
+				if y.Date==z {
+					falg=1
+					break	
+				fmt.Println(y.Date)   
+				fmt.Println(y.ShowName)                                            
+				}
+			}
+			
+			
+			
+			if(falg==1){                
+				
+				http.Redirect(w,r,"/final",http.StatusMovedPermanently)
+			
+			
+			}else if (falg==0){
+				fmt.Fprintln(w,"Tickets are not available")
+			}
+			
+			
+				})
+			
+				http.HandleFunc("/final",func(w http.ResponseWriter,r *http.Request){
+					tmpl:=template.Must(template.ParseFiles("get.html"))
+					if r.Method!=http.MethodPost{
+						tmpl.Execute(w,nil)
+					}	
+					
+			
+					a:=r.FormValue("tick")
+			
+					s,_:=strconv.Atoi(a)
+				var fg int
+			for _,v:=range show{
+				if(s<v.Tickets){
+					fg=1
+				}
+			}
+			
+			
+			if fg==1{
+			fmt.Fprintf(w,"Tickets available")
+			}else{
+				fmt.Fprintf(w,"Tickets not available")
+			}
+				
+			})
+
+		fmt.Printf("listening...8087")
+		http.ListenAndServe(":8087",nil)
+		
+	}
